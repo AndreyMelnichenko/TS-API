@@ -1,5 +1,6 @@
 import * as request from "request-promise-native";
 import * as chai from "chai";
+import * as fs from "fs";
 import { JsonPretty } from "../utils/jsonPretty";
 import prepareQueryString from 'querystring';
 import { Merge, PrintMerge, mergObjects } from "../utils/ObjectsMerge";
@@ -44,7 +45,7 @@ describe("GET request", async function(){
         expect(finalObject).to.include(age)
     })
 
-    it.only("Should have QUERY PARAMS", async function(){
+    it("Should have QUERY PARAMS", async function(){
         let queryString = {                
             name: "Andrey",
             age: ">30",
@@ -54,12 +55,10 @@ describe("GET request", async function(){
             json: true,
             qs: queryString
         })
-        console.log("RESPONSE: ",response.url)
-        let eR = prepareQueryString.stringify(queryString)
-        console.log("PRINT ER: \n",(eR))
-        console.log(JSON.stringify(queryString))
-        console.log("PRINT AR: \n",JSON.stringify(queryString))
-        // expect(eR).to.eql(queryString)
+        console.log("RESPONSE: ",response)
+        let parseUrl = url.parse(response.url,true);
+        console.log("REQUEST URL\n",parseUrl);
+        expect(parseUrl.query).to.eql(queryString)
     })
 
     xit("Shold received query string", async function(){
@@ -72,5 +71,23 @@ describe("GET request", async function(){
         console.log(baseUrl+"/anything/?"+prepareQueryString.stringify(actualQueryString))
         let response = await request.get(baseUrl+"/get/?"+prepareQueryString.stringify(actualQueryString),{json:true})
         console.log("RESPONSE: ",response.uri.query)
+    })
+
+    it.only("Upload and Download file", async function(){
+        const formData = {
+            my_file: fs.createReadStream(__dirname + "/img/iron.jpg")
+        };
+        let resp = await request.post("https://httpbin.org/anything", {
+            formData: formData,
+            json: false
+        });
+        console.log(resp);
+        fs.createWriteStream(__dirname + `/img/iron_new.txt`).write(resp);
+        let parsed = JSON.parse(resp);
+        let base64Data = parsed.files.my_file.replace(
+            /^data:image\/jpeg;base64,/,
+            ""
+        );
+        fs.writeFile(__dirname + "/img/iron_out.jpg", base64Data, "base64", () => {});
     })
 })
