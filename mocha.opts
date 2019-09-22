@@ -1,4 +1,6 @@
 --require ./setup.js
 --slow 2000
 --timeout 5000
-tests/login.ts
+--reporter list
+#--ui bdd
+#--reporter mochawesome

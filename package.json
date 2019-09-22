@@ -4,7 +4,8 @@
   "description": "There ia a first project on TypeScript whitch included API tests",
   "private": true,
   "scripts": {
-    "test": "mocha --opts mocha.opts"
+    "test": "mocha --opts mocha.opts ./tests/login.ts",
+    "test:mocha": "mocha --opts mocha.opts ./tests/TypesTest.ts"
   },
   "keywords": [
     "API",
@@ -33,5 +34,8 @@
     "uri-templates": "0.2.0",
     "chai-json-schema-ajv": "5.0.0",
     "mongoose": "5.7.1"
+  },
+  "devDependencies": {
+    "mochawesome": "4.1.0"
   }
 }
